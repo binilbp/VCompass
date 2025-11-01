@@ -1,4 +1,5 @@
 <script>
+	import { getOpenSkyBoundingBox } from './calculateBoundBox';
 	let angle = $state(0);
 	let isSpinning = $state(false);
 	let trackingPlane = $state(false);
@@ -12,15 +13,26 @@
 	}
 
 	function trackplane() {
+		//used for dial spin
 		isSpinning = !isSpinning;
-		trackingPlane = !trackingPlane;
-		navigator.geolocation.getCurrentPosition(setPosition, locationError);
+		trackingPlane = isSpinning;
+		if (isSpinning) {
+			//visual info condition
+			//setBox function called,if get location else locationError is called
+			console.log('started');
+			navigator.geolocation.getCurrentPosition(setBox, locationError);
+
+			//calculate bound box within 16 of current location data
+			const box = getOpenSkyBoundingBox(currentLat, currentLong, 16);
+		}
 	}
 
-	function setPosition(position) {
+	function setBox(position) {
 		currentLat = position.coords.latitude;
 		currentLong = position.coords.longitude;
 		console.log('Got the location:', currentLat, currentLong);
+
+		//change visual info to Got your location from Getting location
 		gettingLocation = 1;
 	}
 
@@ -64,6 +76,7 @@
 		Be Happy!
 	</button>
 
+	<!-- display info about current procedure -->
 	{#if trackingPlane && gettingLocation === 0}
 		<p class="font-boogaloo text-blue-50">Getting your location</p>
 	{:else if trackingPlane && gettingLocation === 1}
