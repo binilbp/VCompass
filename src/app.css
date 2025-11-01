@@ -1,2 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Boogaloo&display=swap');
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
+
+@theme {
+	--font-boogaloo: 'Boogaloo', sans-serif;
+}
