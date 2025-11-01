@@ -1,29 +1,43 @@
 <script>
-	import { getOpenSkyBoundingBox } from './calculateBoundBox';
 	let angle = $state(0);
 	let isSpinning = $state(false);
 	let trackingPlane = $state(false);
 	let gettingLocation = $state(0);
-	let planefound = false;
-	let currentLat = null;
-	let currentLong = null;
+	let planefound = false; //Plane found
+	let currentLat = null; //Latitude
+	let currentLong = null; //Longitude
+	let planes = []; // plane details
+	let error;
 
 	function rotate() {
 		angle += 1;
 	}
 
-	function trackplane() {
-		//used for dial spin
-		isSpinning = !isSpinning;
-		trackingPlane = isSpinning;
-		if (isSpinning) {
-			//visual info condition
-			//setBox function called,if get location else locationError is called
-			console.log('started');
-			navigator.geolocation.getCurrentPosition(setBox, locationError);
+	function fetchPlanes() {
+		fetchPlanesAPI();
+		if (planefound) {
+			setTimeout(fetchPlanes, 20000); //if planes are found next run after 20s
+		} else {
+			setTimeout(fetchPlanes, 8000); // else run 8s
+		}
+	}
+	async function fetchPlanesAPI() {
+		error = null;
+		console.log(`Fetching planes for: ${currentLat}, ${currentLong}`);
+		const apiUrl = `http://127.0.0.1:8000/api/planes?lat=${currentLat}&lon=${currentLong}`;
 
-			//calculate bound box within 16 of current location data
-			const box = getOpenSkyBoundingBox(currentLat, currentLong, 16);
+		try {
+			const response = await fetch(apiUrl);
+			if (!response.ok) {
+				throw new Error(`API request failed with status ${response.status}`);
+			}
+			const data = await response.json();
+			planefound = true;
+			planes = data;
+			console.log('Received planes:', planes);
+		} catch (err) {
+			error = `Failed to fetch planes: ${err.message}`;
+			console.error(err);
 		}
 	}
 
@@ -50,6 +64,22 @@
 				break;
 			default:
 				console.log('An unknown error occurred.');
+		}
+	}
+
+	//main function
+	function trackplane() {
+		//used for dial spin
+		isSpinning = !isSpinning;
+		trackingPlane = isSpinning;
+		if (isSpinning) {
+			//visual info condition
+			//setBox function called,if get location else locationError is called
+			console.log('started');
+			navigator.geolocation.getCurrentPosition(setBox, locationError);
+			//start the skyscan loop if we got the location
+			if (gettingLocation === 1) {
+			}
 		}
 	}
 </script>
@@ -81,7 +111,7 @@
 		<p class="font-boogaloo text-blue-50">Getting your location</p>
 	{:else if trackingPlane && gettingLocation === 1}
 		<p class="text-center font-boogaloo text-blue-50">
-			Got your location<br />Searching the sky near you!
+			Got your location<br />Searching your sky!
 		</p>
 	{:else if gettingLocation === -1}
 		<p class="font-boogaloo text-blue-50">Did not get your location !</p>
