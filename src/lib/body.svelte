@@ -16,8 +16,10 @@
 	function fetchPlanes() {
 		fetchPlanesAPI();
 		if (planefound) {
+			console.log('Planes found! Next fetch in 20s');
 			setTimeout(fetchPlanes, 20000); //if planes are found next run after 20s
 		} else {
+			console.log('No plane found! Next fetch in 8s');
 			setTimeout(fetchPlanes, 8000); // else run 8s
 		}
 	}
@@ -41,18 +43,22 @@
 		}
 	}
 
-	function setBox(position) {
+	function locationSuccess(position) {
 		currentLat = position.coords.latitude;
 		currentLong = position.coords.longitude;
 		console.log('Got the location:', currentLat, currentLong);
 
 		//change visual info to Got your location from Getting location
 		gettingLocation = 1;
+		//start API loop
+		fetchPlanes();
 	}
 
 	function locationError(err) {
 		gettingLocation = -1;
-		switch (err) {
+		trackingPlane = false;
+		isSpinning = false;
+		switch (err.code) {
 			case err.PERMISSION_DENIED:
 				console.log('User denied the request for Geolocation.');
 				break;
@@ -63,23 +69,22 @@
 				console.log('The request to get user location timed out.');
 				break;
 			default:
-				console.log('An unknown error occurred.');
+				console.log('Undefined error occured');
 		}
 	}
 
 	//main function
 	function trackplane() {
-		//used for dial spin
-		isSpinning = !isSpinning;
-		trackingPlane = isSpinning;
-		if (isSpinning) {
-			//visual info condition
-			//setBox function called,if get location else locationError is called
-			console.log('started');
-			navigator.geolocation.getCurrentPosition(setBox, locationError);
-			//start the skyscan loop if we got the location
-			if (gettingLocation === 1) {
-			}
+		//set start of tracking plane
+		trackingPlane = !trackingPlane;
+		//isSpinning is used to control the plane dial spin; initally turn on spinning
+		isSpinning = trackingPlane;
+		if (trackingPlane) {
+			console.log('Tracking Started');
+			console.log('Getting Location');
+			navigator.geolocation.getCurrentPosition(locationSuccess, locationError);
+			//if we get the location, locationSuccess function would then start the API loop
+			//else locationError would execute
 		}
 	}
 </script>
@@ -108,12 +113,14 @@
 
 	<!-- display info about current procedure -->
 	{#if trackingPlane && gettingLocation === 0}
-		<p class="font-boogaloo text-blue-50">Getting your location</p>
+		<p class="font-boogaloo text-blue-50">Getting your position</p>
 	{:else if trackingPlane && gettingLocation === 1}
 		<p class="text-center font-boogaloo text-blue-50">
 			Got your location<br />Searching your sky!
 		</p>
 	{:else if gettingLocation === -1}
-		<p class="font-boogaloo text-blue-50">Did not get your location !</p>
+		<p class="font-boogaloo text-blue-50">
+			Couldnt get your position :( !<br />Maybe reload and try again ?
+		</p>
 	{/if}
 </div>
