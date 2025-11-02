@@ -8,9 +8,19 @@ import fadilnorthwest from '$lib/assets/audio/fadil-north-west.mp3';
 import fadilsoutheast from '$lib/assets/audio/fadil-south-east.mp3';
 import fadilsouthwest from '$lib/assets/audio/fadil-south-west.mp3';
 
-export function playSound(angle, firstCall = 0) {
-	const arfanOdraa = new Audio(arfanodraa);
-	if (firstCall) arfanOdraa.play();
+//created as promise so that we can have avait
+function arfanCallout() {
+	return new Promise((resolve) => {
+		const arfanOdraa = new Audio(arfanodraa);
+		arfanOdraa.addEventListener('ended', resolve);
+		arfanOdraa.currentTime = 0;
+		arfanOdraa.play();
+	});
+}
+
+export async function playSound(angle, firstCall = 0) {
+	//arfanCallout only when is the first callout
+	if (firstCall) await arfanCallout();
 
 	const arunaNorth = new Audio(arunanorth);
 	const arunaEast = new Audio(arunaeast);

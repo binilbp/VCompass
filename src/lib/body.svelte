@@ -28,7 +28,7 @@
 			angle = calculateAngle(currentLat, currentLong, plane.lat, plane.lon);
 			console.log('Compass angle:', angle);
 			setAngle(angle);
-			playSound((firstCall = 1), (angle = angle));
+			playSound(1, angle);
 
 			//restting planefound for next call
 			planefound = false;
