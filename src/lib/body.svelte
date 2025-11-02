@@ -7,6 +7,7 @@
 	let currentLat = null; //Latitude
 	let currentLong = null; //Longitude
 	let planes = []; // plane details
+	let timerID = null; //used to stop the function settimer
 	let error;
 
 	function rotate() {
@@ -17,10 +18,10 @@
 		fetchPlanesAPI();
 		if (planefound) {
 			console.log('Planes found! Next fetch in 20s');
-			setTimeout(fetchPlanes, 20000); //if planes are found next run after 20s
+			timerID = setTimeout(fetchPlanes, 20000); //if planes are found next run after 20s
 		} else {
 			console.log('No plane found! Next fetch in 8s');
-			setTimeout(fetchPlanes, 8000); // else run 8s
+			timerID = setTimeout(fetchPlanes, 8000); // else run 8s
 		}
 	}
 	async function fetchPlanesAPI() {
@@ -85,6 +86,9 @@
 			navigator.geolocation.getCurrentPosition(locationSuccess, locationError);
 			//if we get the location, locationSuccess function would then start the API loop
 			//else locationError would execute
+		} else {
+			//no tracking so we immediately stop any current tracking
+			clearTimeout(timerID);
 		}
 	}
 </script>
