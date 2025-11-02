@@ -129,7 +129,7 @@
 		<p class="font-boogaloo text-2xl text-blue-50">Getting your position</p>
 	{:else if trackingPlane && gettingLocation === 1}
 		<p class="text-center font-boogaloo text-2xl text-blue-50">
-			Got your location<br />Searching your sky!
+			Got your location {currentLat}{currentLong} <br />Searching your sky!
 		</p>
 	{:else if gettingLocation === -1}
 		<p class="font-boogaloo text-2xl text-blue-50">
