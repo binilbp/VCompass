@@ -1,4 +1,6 @@
 <script>
+	import whitedial from '$lib/assets/dial_white.png';
+	import whiteplane from '$lib/assets/plane_white.png';
 	let angle = $state(0);
 	let isSpinning = $state(false);
 	let trackingPlane = $state(false);
@@ -6,7 +8,7 @@
 	let planefound = false; //Plane found
 	let currentLat = null; //Latitude
 	let currentLong = null; //Longitude
-	let planes = []; // plane details
+	let planes = { undefined }; // plane details
 	let timerID = null; //used to stop the function settimer
 	let error;
 
@@ -20,8 +22,8 @@
 			console.log('Planes found! Next fetch in 20s');
 			timerID = setTimeout(fetchPlanes, 20000); //if planes are found next run after 20s
 		} else {
-			console.log('No plane found! Next fetch in 8s');
-			timerID = setTimeout(fetchPlanes, 8000); // else run 8s
+			console.log('No plane found! Next fetch in 10s');
+			timerID = setTimeout(fetchPlanes, 10000); // else run after 10s
 		}
 	}
 	async function fetchPlanesAPI() {
@@ -35,9 +37,14 @@
 				throw new Error(`API request failed with status ${response.status}`);
 			}
 			const data = await response.json();
-			planefound = true;
-			planes = data;
-			console.log('Received planes:', planes);
+			if (data === null) {
+				planefound = false;
+				console.log('Received none');
+			} else {
+				planefound = true;
+				planes = data;
+				console.log('Received data', planes);
+			}
 		} catch (err) {
 			error = `Failed to fetch planes: ${err.message}`;
 			console.error(err);
@@ -83,7 +90,9 @@
 		if (trackingPlane) {
 			console.log('Tracking Started');
 			console.log('Getting Location');
-			navigator.geolocation.getCurrentPosition(locationSuccess, locationError);
+			navigator.geolocation.getCurrentPosition(locationSuccess, locationError, {
+				enableHighAccuracy: true
+			});
 			//if we get the location, locationSuccess function would then start the API loop
 			//else locationError would execute
 		} else {
@@ -98,14 +107,14 @@
 		<img
 			class="z-20 col-start-1 row-start-1 h-auto w-2/4"
 			style="transform: rotate({angle}deg)"
-			src="src/lib/assets/VCompass/plane_white.png"
+			src={whiteplane}
 			alt="white colored plane"
 		/>
 		<img
 			class="z-10 col-start-1 row-start-1 max-h-80"
 			class:animate-[spin_8s_linear_infinite]={isSpinning}
-			src="src/lib/assets/VCompass/dial_white.png"
-			alt="white dials of compass"
+			src={whitedial}
+			alt="white compass dial"
 		/>
 	</div>
 	<button
@@ -117,13 +126,13 @@
 
 	<!-- display info about current procedure -->
 	{#if trackingPlane && gettingLocation === 0}
-		<p class="font-boogaloo text-blue-50">Getting your position</p>
+		<p class="font-boogaloo text-2xl text-blue-50">Getting your position</p>
 	{:else if trackingPlane && gettingLocation === 1}
-		<p class="text-center font-boogaloo text-blue-50">
+		<p class="text-center font-boogaloo text-2xl text-blue-50">
 			Got your location<br />Searching your sky!
 		</p>
 	{:else if gettingLocation === -1}
-		<p class="font-boogaloo text-blue-50">
+		<p class="font-boogaloo text-2xl text-blue-50">
 			Couldnt get your position :( !<br />Maybe reload and try again ?
 		</p>
 	{/if}
