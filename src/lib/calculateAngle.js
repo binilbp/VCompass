@@ -1,4 +1,8 @@
-function calculateBearing(lat1, lon1, lat2, lon2) {
+function toRad(degrees) {
+	return degrees * (Math.PI / 180);
+}
+
+export function calculateAngle(lat1, lon1, lat2, lon2) {
 	// Convert latitudes and longitudes to radians
 	const phi1 = toRad(lat1);
 	const lambda1 = toRad(lon1);
@@ -20,5 +24,8 @@ function calculateBearing(lat1, lon1, lat2, lon2) {
 	let bearing = theta * (180 / Math.PI);
 
 	// Normalize the bearing to be between 0 and 360
-	return (bearing + 360) % 360;
+	let angle = (bearing + 360) % 360;
+
+	//round the angle to 2 decimal palces
+	return (Math.round(angle) * 100) / 100;
 }

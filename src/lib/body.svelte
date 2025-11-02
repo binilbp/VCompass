@@ -1,31 +1,45 @@
 <script>
 	import whitedial from '$lib/assets/dial_white.png';
 	import whiteplane from '$lib/assets/plane_white.png';
-	let angle = $state(0);
+	import { playSound } from '$lib/playSound.js';
+	import { calculateAngle } from '$lib/calculateAngle.js';
+
+	let angle = 0;
+	let planeAngle = $state(0);
 	let isSpinning = $state(false);
 	let trackingPlane = $state(false);
 	let gettingLocation = $state(0);
 	let planefound = false; //Plane found
 	let currentLat = null; //Latitude
 	let currentLong = null; //Longitude
-	let planes = { undefined }; // plane details
+	let plane = undefined; // plane details
 	let timerID = null; //used to stop the function settimer
 	let error;
 
-	function rotate() {
-		angle += 1;
+	function setAngle(angle) {
+		planeAngle = angle;
 	}
 
-	function fetchPlanes() {
-		fetchPlanesAPI();
+	async function fetchPlane() {
+		await fetchPlanesAPI();
 		if (planefound) {
 			console.log('Planes found! Next fetch in 20s');
-			timerID = setTimeout(fetchPlanes, 20000); //if planes are found next run after 20s
+			//calculate the angle for setting compass needle
+			angle = calculateAngle(currentLat, currentLong, plane.lat, plane.lon);
+			console.log('Compass angle:', angle);
+			setAngle(angle);
+			playSound((firstCall = 1), (angle = angle));
+
+			//restting planefound for next call
+			planefound = false;
+			//setting next call
+			timerID = setTimeout(fetchPlane, 20000); //if planes are found next run after 20s
 		} else {
 			console.log('No plane found! Next fetch in 10s');
-			timerID = setTimeout(fetchPlanes, 10000); // else run after 10s
+			timerID = setTimeout(fetchPlane, 10000); // else run after 10s
 		}
 	}
+
 	async function fetchPlanesAPI() {
 		error = null;
 		console.log(`Fetching planes for: ${currentLat}, ${currentLong}`);
@@ -38,12 +52,12 @@
 			}
 			const data = await response.json();
 			if (data === null) {
-				planefound = false;
 				console.log('Received none');
 			} else {
 				planefound = true;
-				planes = data;
-				console.log('Received data', planes);
+				//the received item is nested object, denest it
+				plane = data.plane;
+				console.log('Received data', plane);
 			}
 		} catch (err) {
 			error = `Failed to fetch planes: ${err.message}`;
@@ -58,8 +72,9 @@
 
 		//change visual info to Got your location from Getting location
 		gettingLocation = 1;
-		//start API loop
-		fetchPlanes();
+
+		//start loop
+		fetchPlane();
 	}
 
 	function locationError(err) {
@@ -90,9 +105,6 @@
 		if (trackingPlane) {
 			console.log('Tracking Started');
 			console.log('Getting Location');
-			// navigator.geolocation.getCurrentPosition(locationSuccess, locationError, {
-			// 	enableHighAccuracy: true
-			// });
 			navigator.geolocation.getCurrentPosition(locationSuccess, locationError);
 			//if we get the location, locationSuccess function would then start the API loop
 			//else locationError would execute
@@ -107,7 +119,7 @@
 	<div class="grid place-items-center">
 		<img
 			class="z-20 col-start-1 row-start-1 h-auto w-2/4"
-			style="transform: rotate({angle}deg)"
+			style="transform: rotate({planeAngle}deg)"
 			src={whiteplane}
 			alt="white colored plane"
 		/>
@@ -130,7 +142,7 @@
 		<p class="font-boogaloo text-2xl text-blue-50">Getting your position</p>
 	{:else if trackingPlane && gettingLocation === 1}
 		<p class="text-center font-boogaloo text-2xl text-blue-50">
-			Got your location {currentLat}{currentLong} <br />Searching your sky!
+			Got your location <br />Searching your sky!
 		</p>
 	{:else if gettingLocation === -1}
 		<p class="font-boogaloo text-2xl text-blue-50">
