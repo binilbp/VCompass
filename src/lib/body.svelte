@@ -90,9 +90,10 @@
 		if (trackingPlane) {
 			console.log('Tracking Started');
 			console.log('Getting Location');
-			navigator.geolocation.getCurrentPosition(locationSuccess, locationError, {
-				enableHighAccuracy: true
-			});
+			// navigator.geolocation.getCurrentPosition(locationSuccess, locationError, {
+			// 	enableHighAccuracy: true
+			// });
+			navigator.geolocation.getCurrentPosition(locationSuccess, locationError);
 			//if we get the location, locationSuccess function would then start the API loop
 			//else locationError would execute
 		} else {
