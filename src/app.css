@@ -1,8 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Boogaloo&family=Chilanka&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Baloo+Chettan+2:wght@400..800&family=Boogaloo&family=Chilanka&family=Comfortaa:wght@300..700&display=swap');
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
 
 @theme {
 	--font-boogaloo: 'Boogaloo', sans-serif;
 	--font-chilanka: 'Chilanka', opensans;
+	--font-baloo: 'Baloo Chettan 2', opensans;
+	--font-comfortaa: 'Comfortaa', sans-serif;
 }

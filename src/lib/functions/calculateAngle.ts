@@ -1,8 +1,8 @@
-function toRad(degrees) {
+function toRad(degrees: number) {
 	return degrees * (Math.PI / 180);
 }
 
-export function calculateAngle(lat1, lon1, lat2, lon2) {
+export function calculateAngle(lat1: number, lon1: number, lat2: number, lon2: number) {
 	// Convert latitudes and longitudes to radians
 	const phi1 = toRad(lat1);
 	const lambda1 = toRad(lon1);

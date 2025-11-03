@@ -1,5 +1,5 @@
 <script>
-	import { playSound } from './playSound';
+	import { playSound } from '$lib/functions/playSound';
 	let { pangle, icao24, callsign, lon, lat, altitude_m, velocity_ms, distance } = $props();
 	console.log('display info on plane', callsign, '@', distance);
 	let planeName = $derived(callsign);
