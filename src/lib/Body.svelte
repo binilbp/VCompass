@@ -1,161 +1,46 @@
-<script>
-	import whitedial from '$lib/assets/dial_white.png';
+<script lang="ts">
+	import whitedial from '$lib/assets/dial_white.svg';
 	import whiteplane from '$lib/assets/plane_white.png';
+	import nsewdial from '$lib/assets/nsew_dial.svg';
 	import { playSound } from '$lib/playSound.js';
 	import { calculateAngle } from '$lib/calculateAngle.js';
 	import PlaneCard from '$lib/PlaneCard.svelte';
 
-	let angle = 0;
-	let planeAngle = $state(0);
-	let isSpinning = $state(false);
-	let trackingPlane = $state(false);
-	let gettingLocation = $state(0);
-	let planeFound = false; //Plane found
-	let currentLat = null; //Latitude
-	let currentLong = null; //Longitude
-	let plane = $state(undefined); // plane details
-	let timerID = null; //used to stop the function settimer
-	let error;
+	//top level control variable
+	let isTrackingPlane: boolean = $state(false);
+	//spin animation control variable
+	let isSpinning: boolean = $derived(isTrackingPlane);
+	//white plane angle control variable
+	let planeAngle: number = $state(0);
 
-	function setAngle(angle) {
+	function rotatePlane(angle: number) {
+		//this function set the angle of the white plane
 		planeAngle = angle;
 	}
 
-	async function fetchPlane() {
-		//check if track plane is still on
-		if (!trackingPlane) return;
-		try {
-			await fetchPlanesAPI();
-			if (planeFound) {
-				console.log('Planes found! Next fetch in 20s');
-				//calculate the angle for setting compass needle
-				angle = calculateAngle(currentLat, currentLong, plane.lat, plane.lon);
-				console.log('Compass angle:', angle);
-				setAngle(angle);
-				playSound(angle, 0);
-
-				//restting planefound for next call
-				planeFound = false;
-				//setting next call
-				console.log(trackingPlane);
-				if (trackingPlane) timerID = setTimeout(fetchPlane, 20000); //if planes are found next run after 20s
-			} else {
-				console.log(trackingPlane);
-				console.log('No plane found! Next fetch in 10s');
-				if (trackingPlane) timerID = setTimeout(fetchPlane, 10000); // else run after 10s
-			}
-		} catch {
-			trackingPlane = false;
-			isSpinning = false;
-			console.log('Server Error');
-		}
-	}
-
-	async function fetchPlanesAPI() {
-		error = null;
-		console.log(`Fetching planes for: ${currentLat}, ${currentLong}`);
-		const apiUrl = `http://127.0.0.1:8000/api/planes?lat=${currentLat}&lon=${currentLong}`;
-
-		const response = await fetch(apiUrl);
-		if (!response.ok) {
-			throw new Error(`API request failed with status ${response.status}`);
-		}
-		const data = await response.json();
-		if (data === null) {
-			console.log('Received none');
-			planeFound = false;
-		} else {
-			planeFound = true;
-			//the received item is nested object, denest it
-			plane = data.plane;
-			console.log('Received data', plane);
-		}
-	}
-
-	function locationSuccess(position) {
-		currentLat = position.coords.latitude;
-		currentLong = position.coords.longitude;
-		console.log('Got the location:', currentLat, currentLong);
-
-		//change visual info to Got your location from Getting location
-		gettingLocation = 1;
-
-		//start loop only if trackingPlane is true
-		if (trackingPlane) fetchPlane();
-	}
-
-	function locationError(err) {
-		gettingLocation = -1;
-		trackingPlane = false;
-		isSpinning = false;
-		switch (err.code) {
-			case err.PERMISSION_DENIED:
-				console.log('User denied the request for Geolocation.');
-				break;
-			case err.POSITION_UNAVAILABLE:
-				console.log('Location information is unavailable.');
-				break;
-			case err.TIMEOUT:
-				console.log('The request to get user location timed out.');
-				break;
-			default:
-				console.log('Undefined error occured');
-		}
-	}
-
-	//main function
-	function trackplane() {
-		//set start of tracking plane
-		trackingPlane = !trackingPlane;
-		//isSpinning is used to control the plane dial spin; initally turn on spinning
-		isSpinning = trackingPlane;
-		if (trackingPlane) {
-			console.log('Tracking Started');
-			console.log('Getting Location');
-			navigator.geolocation.getCurrentPosition(locationSuccess, locationError);
-			//if we get the location, locationSuccess function would then start the API loop
-			//else locationError would execute
-		} else {
-			//no tracking so we immediately stop any current tracking
-			clearTimeout(timerID);
-			planeAngle = 0;
-			plane = undefined;
-		}
+	function trackPlane() {
+		isTrackingPlane = !isTrackingPlane;
+		rotatePlane(45);
 	}
 </script>
 
 <div class="flex flex-col items-center justify-start gap-8 p-5">
 	<div class="grid place-items-center">
 		<img
-			class="z-20 col-start-1 row-start-1 h-auto w-2/4"
+			class="z-30 col-start-1 row-start-1 h-auto w-2/4 transition-transform duration-1000"
 			style="transform: rotate({planeAngle}deg)"
 			src={whiteplane}
 			alt="white colored plane"
 		/>
 		<img
-			class="z-10 col-start-1 row-start-1 max-h-80"
+			class="z-20 col-start-1 row-start-1 max-h-80"
 			class:animate-[spin_8s_linear_infinite]={isSpinning}
 			src={whitedial}
 			alt="white compass dial"
 		/>
+		<img class="z-10 col-start-1 row-start-1 max-h-80" src={nsewdial} alt="white compass dial" />
 	</div>
-	<button class="rounded-2xl bg-sky-900 px-4 py-3.5 text-lime-500 shadow-md" onclick={trackplane}>
+	<button class="rounded-2xl bg-sky-900 px-4 py-3.5 text-lime-500 shadow-md" onclick={trackPlane}>
 		Ready
 	</button>
-
-	<!-- display info about current procedure -->
-	{#if trackingPlane && gettingLocation === 0}
-		<p class="font-boogaloo text-2xl text-blue-50">Getting your position</p>
-	{:else if trackingPlane && gettingLocation === 1}
-		<p class="text-center font-boogaloo text-2xl text-blue-50">
-			Got your location <br />Searching your sky!
-		</p>
-	{:else if gettingLocation === -1}
-		<p class="font-boogaloo text-2xl text-blue-50">
-			Couldnt get your position :( !<br />Maybe reload and try again ?
-		</p>
-	{/if}
-	{#if plane}
-		<PlaneCard {planeAngle} {...plane} />
-	{/if}
 </div>
