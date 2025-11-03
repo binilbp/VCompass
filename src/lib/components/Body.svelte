@@ -1,7 +1,7 @@
 <script lang="ts">
 	//assets imported
 	import whitedial from '$lib/assets/dial_white.svg';
-	import whiteplane from '$lib/assets/plane_white.svg';
+	import whiteplane from '$lib/assets/plane_white.png';
 	import nsewdial from '$lib/assets/nsew_dial.svg';
 
 	// functions imported
@@ -54,7 +54,7 @@
 	<div class="flex flex-col items-center justify-start gap-8 p-5 md:flex-row md:justify-between">
 		<div class="grid place-items-center">
 			<img
-				class="z-30 col-start-1 row-start-1 h-auto w-2/4 shadow-md transition-transform duration-1000"
+				class="z-30 col-start-1 row-start-1 h-auto w-2/4 transition-transform duration-1000"
 				style="transform: rotate({planeAngle}deg)"
 				src={whiteplane}
 				alt="white colored plane"
@@ -74,7 +74,7 @@
 			Ready
 		</button>
 	</div>
-	<div class="flex flex-col items-center justify-start px-5 py-2 md:px-24 md:pt-30">
+	<div class="flex flex-col items-center justify-start px-5 py-2 md:w-120 md:pt-30">
 		<InfoBar {statusCode} />
 	</div>
 </div>
