@@ -6,20 +6,27 @@
 
 	// functions imported
 	import { getPositionCords } from '$lib/functions/getPositionCords.js';
+	import { getPlane } from '$lib/functions/getPlane';
 	// import { playSound } from '$lib/playSound.js';
 	// import { calculateAngle } from '$lib/calculateAngle.js';
 
-	//components imported
+	// components imported
 	import InfoBar from '$lib/components/InfoBar.svelte';
 	import PlaneCard from '$lib/components/PlaneCard.svelte';
 
-	//top level control variable
+	// top level control variable
 	let isTrackingPlane: boolean = $state(false);
-	//spin animation control variable
+	// spin animation control variable
 	let isSpinning: boolean = $derived(isTrackingPlane);
-	//white plane angle control variable
+	// white plane angle control variable
 	let planeAngle: number = $state(0);
+	// whole program current status and also used to show info
 	let statusCode: number = $state(0);
+	// global variables storing latitude and longitude of user
+	let userLatitude: number;
+	let userLongitude: number;
+	// store the timer we set, this can also be used to clear the timers when needed
+	let timerID: number;
 
 	function rotatePlane(angle: number) {
 		//this function set the angle of the white plane
@@ -27,25 +34,56 @@
 	}
 
 	async function startEngine() {
-		//primary task is to get location
-		statusCode = 119;
+		let planeData = undefined;
+		//simple function to stop this function here if isTrackingPlane is false
+		if (!isTrackingPlane) return;
+
+		//try to connect to backend using getPlane
 		try {
-			const location = await getPositionCords();
-			const userLatitude = location.latitude;
-			const userLongitude = location.latitude;
-			console.log('Location :', userLatitude, userLongitude);
-			statusCode = 125;
+			planeData = await getPlane(userLatitude, userLongitude);
 		} catch (error: any) {
-			console.error('Error retrieving location:', error.message);
-			statusCode = 120;
+			console.log('Backend Issue');
+			statusCode = 131;
 			isTrackingPlane = false;
 		}
+
+		if (planeData === undefined && isTrackingPlane === true) {
+			console.log('No plane data received,next try in 15s ');
+			timerID = setTimeout(startEngine, 15000);
+		} else if (planeData !== undefined && isTrackingPlane === true) {
+			console.log('Got plane data, next try in 25s');
+			console.log('PlaneData:', planeData);
+			timerID = setTimeout(startEngine, 25000);
+		} else {
+			console.log('Stopping Engine');
+			//clear exiting timers
+			clearTimeout(timerID);
+		}
 	}
-	function trackPlane() {
+
+	async function trackPlane() {
 		isTrackingPlane = !isTrackingPlane;
+
 		//if illel off cheyumbolum on cheyumbolum startEngine run aavum
 		if (isTrackingPlane) {
-			startEngine();
+			statusCode = 119;
+			// try getting location
+			try {
+				const location = await getPositionCords();
+				userLatitude = location.latitude;
+				userLongitude = location.latitude;
+				statusCode = 125;
+				console.log('Location :', userLatitude, userLongitude);
+			} catch (error: any) {
+				console.error('Error retrieving location:', error.message);
+				statusCode = 120;
+				//stop TrackingPlane
+				isTrackingPlane = false;
+			}
+			//continue to start the main enginge if stil isTrackingPlane
+			if (isTrackingPlane) {
+				startEngine();
+			}
 		}
 	}
 </script>
