@@ -1,7 +1,7 @@
 <script lang="ts">
 	//assets imported
 	import whitedial from '$lib/assets/dial_white.svg';
-	import whiteplane from '$lib/assets/plane_white.png';
+	import whiteplane from '$lib/assets/plane_white.svg';
 	import nsewdial from '$lib/assets/nsew_dial.svg';
 
 	// functions imported
@@ -33,7 +33,8 @@
 			const location = await getPositionCords();
 			const userLatitude = location.latitude;
 			const userLongitude = location.latitude;
-			console.log('Got user location :', userLatitude, userLongitude);
+			console.log('Location :', userLatitude, userLongitude);
+			statusCode = 125;
 		} catch (error: any) {
 			console.error('Error retrieving location:', error.message);
 			statusCode = 120;
@@ -53,7 +54,7 @@
 	<div class="flex flex-col items-center justify-start gap-8 p-5 md:flex-row md:justify-between">
 		<div class="grid place-items-center">
 			<img
-				class="z-30 col-start-1 row-start-1 h-auto w-2/4 transition-transform duration-1000"
+				class="z-30 col-start-1 row-start-1 h-auto w-2/4 shadow-md transition-transform duration-1000"
 				style="transform: rotate({planeAngle}deg)"
 				src={whiteplane}
 				alt="white colored plane"

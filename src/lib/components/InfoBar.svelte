@@ -22,6 +22,12 @@
 					eng: "Couldn't get you position.<br/>Maybe reload and try again?.",
 					mal: 'കിട്ടിയില്ലലോ, ലൊക്കേഷൻ ഒക്കെ ഓൺ അല്ലെ?'
 				};
+			case 125:
+				console.log('Got location');
+				return {
+					eng: 'Got your position',
+					mal: 'ഓക്കേ സെറ്റ്, സാനം കിട്ടി'
+				};
 			default:
 				return { eng: '', mal: '' };
 		}
