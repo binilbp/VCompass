@@ -20,7 +20,6 @@
 
 	function trackPlane() {
 		isTrackingPlane = !isTrackingPlane;
-		rotatePlane(45);
 	}
 </script>
 
