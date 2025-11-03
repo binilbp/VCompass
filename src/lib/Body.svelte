@@ -3,16 +3,17 @@
 	import whiteplane from '$lib/assets/plane_white.png';
 	import { playSound } from '$lib/playSound.js';
 	import { calculateAngle } from '$lib/calculateAngle.js';
+	import PlaneCard from '$lib/PlaneCard.svelte';
 
 	let angle = 0;
 	let planeAngle = $state(0);
 	let isSpinning = $state(false);
 	let trackingPlane = $state(false);
 	let gettingLocation = $state(0);
-	let planefound = false; //Plane found
+	let planeFound = false; //Plane found
 	let currentLat = null; //Latitude
 	let currentLong = null; //Longitude
-	let plane = undefined; // plane details
+	let plane = $state(undefined); // plane details
 	let timerID = null; //used to stop the function settimer
 	let error;
 
@@ -22,7 +23,7 @@
 
 	async function fetchPlane() {
 		await fetchPlanesAPI();
-		if (planefound) {
+		if (planeFound) {
 			console.log('Planes found! Next fetch in 20s');
 			//calculate the angle for setting compass needle
 			angle = calculateAngle(currentLat, currentLong, plane.lat, plane.lon);
@@ -31,7 +32,7 @@
 			playSound(1, angle);
 
 			//restting planefound for next call
-			planefound = false;
+			planeFound = false;
 			//setting next call
 			timerID = setTimeout(fetchPlane, 20000); //if planes are found next run after 20s
 		} else {
@@ -54,7 +55,7 @@
 			if (data === null) {
 				console.log('Received none');
 			} else {
-				planefound = true;
+				planeFound = true;
 				//the received item is nested object, denest it
 				plane = data.plane;
 				console.log('Received data', plane);
@@ -111,6 +112,8 @@
 		} else {
 			//no tracking so we immediately stop any current tracking
 			clearTimeout(timerID);
+			planeAngle = 0;
+			plane = undefined;
 		}
 	}
 </script>
@@ -148,5 +151,9 @@
 		<p class="font-boogaloo text-2xl text-blue-50">
 			Couldnt get your position :( !<br />Maybe reload and try again ?
 		</p>
+	{/if}
+
+	{#if plane}
+		<PlaneCard {...plane} />
 	{/if}
 </div>
