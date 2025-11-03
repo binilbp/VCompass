@@ -18,9 +18,9 @@ function arfanCallout() {
 	});
 }
 
-export async function playSound(angle, firstCall = 0) {
+export async function playSound(angle, timesCalled = 0) {
 	//arfanCallout only when is the first callout
-	if (firstCall) await arfanCallout();
+	if (timesCalled == 0) await arfanCallout();
 
 	const arunaNorth = new Audio(arunanorth);
 	const arunaEast = new Audio(arunaeast);
