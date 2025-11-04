@@ -22,7 +22,7 @@
 	// white plane angle control variable
 	let planeAngle: number = $state(0);
 	// whole program current status and also used to show info
-	let statusCode: number = $state(127);
+	let statusCode: number = $state(0);
 	// global variables storing latitude and longitude of user
 	let userLatitude: number;
 	let userLongitude: number;
