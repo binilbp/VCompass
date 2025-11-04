@@ -23,10 +23,28 @@
 					mal: 'കിട്ടിയില്ലലോ, ലൊക്കേഷൻ ഒക്കെ ഓൺ അല്ലെ?'
 				};
 			case 125:
-				console.log('Got location');
+				console.log('got position');
 				return {
-					eng: 'Got your position',
-					mal: 'ഓക്കേ സെറ്റ്, സാനം കിട്ടി'
+					eng: 'Searching your skys now!',
+					mal: 'ഓക്കേ സെറ്റ്, ആകാശം നോക്കട്ടെ ഇനി ...'
+				};
+			case 126:
+				console.log('still searching');
+				return {
+					eng: 'Still searching for a plane!',
+					mal: 'ഇപ്പോളും ആകാശം നോക്കാണ് ...'
+				};
+			case 127:
+				console.log('no hope');
+				return {
+					eng: 'No planes in your sky now<br/>Stopping the search now',
+					mal: 'ഒരെണ്ണം പോലും ഇല്ലല്ലോ ... <br/>search നിർത്താണ്'
+				};
+			case 129:
+				console.log('now what?');
+				return {
+					eng: 'hm.. since there is no plane now, try again later after some time😅?',
+					mal: 'sed ആവല്ലേ ... കുറച്ച് കഴിഞ്ഞു വാ, സെറ്റ് ആക്കാം ...'
 				};
 			case 131:
 				console.log('Cant Connect to Backend');

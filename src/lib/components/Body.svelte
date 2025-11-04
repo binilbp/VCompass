@@ -22,14 +22,14 @@
 	// white plane angle control variable
 	let planeAngle: number = $state(0);
 	// whole program current status and also used to show info
-	let statusCode: number = $state(0);
+	let statusCode: number = $state(127);
 	// global variables storing latitude and longitude of user
 	let userLatitude: number;
 	let userLongitude: number;
 	// store the timer we set, this can also be used to clear the timers when needed
 	let timerID: number = 0;
 	// consecutive times we got no data back
-	let noDataCount: number = 0;
+	let noDataCount: number = $state(3);
 
 	function handlePlaneData(data: any, gotData: boolean) {
 		//just two make sure no paralled timer is running
@@ -37,6 +37,13 @@
 		if (!gotData) {
 			console.log('Set 10s timer for next plane call');
 			timerID = setInterval(startPlaneCall, 10000);
+			//increment noDataCount for long wait special info
+			noDataCount++;
+			if (noDataCount >= 2) statusCode = 126;
+			if (noDataCount == 5) {
+				statusCode = 127;
+				isTrackingPlane = false;
+			}
 		} else {
 			console.log('Set 25s timer for next plane call');
 			timerID = setTimeout(startPlaneCall, 25000);
@@ -133,12 +140,25 @@
 			/>
 			<img class="z-10 col-start-1 row-start-1 max-h-80" src={nsewdial} alt="white compass dial" />
 		</div>
-		<button
-			class="rounded-2xl bg-sky-900 px-4 py-3.5 font-comfortaa font-semibold text-lime-500 shadow-md"
-			onclick={trackPlane}
-		>
-			Ready
-		</button>
+		{#if noDataCount == 5}
+			<button
+				class="rounded-2xl bg-sky-900 px-4 py-3.5 font-comfortaa font-semibold text-lime-500 shadow-md"
+				onclick={() => {
+					statusCode = 129;
+					noDataCount = 0;
+				}}
+			>
+				Now What?
+			</button>
+		{/if}
+		{#if noDataCount < 5}
+			<button
+				class="rounded-2xl bg-sky-900 px-4 py-3.5 font-comfortaa font-semibold text-lime-500 shadow-md"
+				onclick={trackPlane}
+			>
+				Ready
+			</button>
+		{/if}
 	</div>
 	<div class="flex flex-col items-center justify-start px-5 py-2 md:w-120 md:pt-30">
 		<InfoBar {statusCode} />
