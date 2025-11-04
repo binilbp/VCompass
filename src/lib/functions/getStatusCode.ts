@@ -15,4 +15,6 @@ export function getStatusCode(angle: number) {
 	if (angle >= 247.5 && angle < 292.5) return 141;
 	//northwest
 	if (angle >= 292.5 && angle < 337.5) return 142;
+	//if nothing works
+	return angle;
 }

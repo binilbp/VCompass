@@ -34,6 +34,55 @@
 					eng: 'Sorry! Backend Issues.Try Later',
 					mal: 'ശേ !! പണി കിട്ടി ബ്രോ, കണക്ട് ആവണില്ല.<br />കുറച്ക്കഴിഞ്ഞു വാ, സെറ്റ് ആക്കാം'
 				};
+			case 135:
+				console.log('Plane @ north');
+				return {
+					eng: 'Look North now!',
+					mal: 'വടക്ക് പ്ലെയിൻ പോവിണ്ട് ഇപ്പൊ!'
+				};
+			case 136:
+				console.log('Plane @ north-east');
+				return {
+					eng: 'Look NorthEast now!',
+					mal: 'വടക്ക് കിഴക്ക് പ്ലെയിൻ പോവിണ്ട് ഇപ്പൊ!'
+				};
+			case 137:
+				console.log('Plane @ east');
+				return {
+					eng: 'Look East now!',
+					mal: 'കിഴക്ക് പ്ലെയിൻ പോവിണ്ട് ഇപ്പൊ!'
+				};
+			case 138:
+				console.log('Plane @ south-east');
+				return {
+					eng: 'Look SouthEast now!',
+					mal: 'തെക്ക് കിഴക്ക് പ്ലെയിൻ പോവിണ്ട് ഇപ്പൊ!'
+				};
+			case 139:
+				console.log('Plane @ south');
+				return {
+					eng: 'Look South now!',
+					mal: 'തെക്ക് പ്ലെയിൻ പോവിണ്ട് ഇപ്പൊ!'
+				};
+			case 140:
+				console.log('Plane @ south-west');
+				return {
+					eng: 'Look SouthWest now!',
+					mal: 'തെക്ക് പടിഞ്ഞാറ് പ്ലെയിൻ പോവിണ്ട് ഇപ്പൊ!'
+				};
+			case 141:
+				console.log('Plane @ west');
+				return {
+					eng: 'Look West now!',
+					mal: 'പടിഞ്ഞാറ് പ്ലെയിൻ പോവിണ്ട് ഇപ്പൊ!'
+				};
+			case 142:
+				console.log('Plane @ north-west');
+				return {
+					eng: 'Look NorthWest now!',
+					mal: 'വടക്ക് പടിഞ്ഞാറ്  പ്ലെയിൻ പോവിണ്ട് ഇപ്പൊ!'
+				};
+
 			default:
 				return { eng: '', mal: '' };
 		}

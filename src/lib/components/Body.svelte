@@ -8,6 +8,7 @@
 	import { getPositionCords } from '$lib/functions/getPositionCords';
 	import { getPlane } from '$lib/functions/getPlane';
 	// import { playSound } from '$lib/playSound.js';
+	import { getStatusCode } from '$lib/functions/getStatusCode';
 	import { calculateAngle } from '$lib/functions/calculateAngle';
 
 	// components imported
@@ -30,7 +31,7 @@
 	// consecutive times we got no data back
 	let noDataCount: number = 0;
 
-	function handlePlaneData(data, gotData: boolean) {
+	function handlePlaneData(data: any, gotData: boolean) {
 		//just two make sure no paralled timer is running
 		if (timerID > 0) clearTimeout(timerID);
 		if (!gotData) {
@@ -43,6 +44,8 @@
 			const angle = calculateAngle(userLatitude, userLongitude, data.lat, data.lon);
 			//set the white plane angle
 			planeAngle = angle;
+			//set info
+			statusCode = getStatusCode(angle);
 		}
 	}
 
@@ -105,6 +108,9 @@
 				startPlaneCall();
 			}
 		} else {
+			console.log('Tracking Stopped');
+			console.log('Clearing any exising timers');
+			if (timerID > 0) clearTimeout(timerID);
 			planeAngle = 0;
 		}
 	}
