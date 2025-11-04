@@ -7,4 +7,5 @@ export async function getPlane(userLatitude: number, userLongitude: number) {
 		throw new Error(`API request failed with status ${response.status}`);
 	}
 	const data = await response.json();
+	return data.plane;
 }

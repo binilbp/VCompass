@@ -5,10 +5,10 @@
 	import nsewdial from '$lib/assets/nsew_dial.svg';
 
 	// functions imported
-	import { getPositionCords } from '$lib/functions/getPositionCords.js';
+	import { getPositionCords } from '$lib/functions/getPositionCords';
 	import { getPlane } from '$lib/functions/getPlane';
 	// import { playSound } from '$lib/playSound.js';
-	// import { calculateAngle } from '$lib/calculateAngle.js';
+	import { calculateAngle } from '$lib/functions/calculateAngle';
 
 	// components imported
 	import InfoBar from '$lib/components/InfoBar.svelte';
@@ -26,38 +26,58 @@
 	let userLatitude: number;
 	let userLongitude: number;
 	// store the timer we set, this can also be used to clear the timers when needed
-	let timerID: number;
+	let timerID: number = 0;
+	// consecutive times we got no data back
+	let noDataCount: number = 0;
 
-	function rotatePlane(angle: number) {
-		//this function set the angle of the white plane
-		planeAngle = angle;
+	function handlePlaneData(data, gotData: boolean) {
+		//just two make sure no paralled timer is running
+		if (timerID > 0) clearTimeout(timerID);
+		if (!gotData) {
+			console.log('Set 10s timer for next plane call');
+			timerID = setInterval(startPlaneCall, 10000);
+		} else {
+			console.log('Set 25s timer for next plane call');
+			timerID = setTimeout(startPlaneCall, 25000);
+			//get angle to set the white plane
+			const angle = calculateAngle(userLatitude, userLongitude, data.lat, data.lon);
+			//set the white plane angle
+			planeAngle = angle;
+		}
 	}
 
-	async function startEngine() {
+	async function startPlaneCall() {
 		let planeData = undefined;
-		//simple function to stop this function here if isTrackingPlane is false
+		//simple check to stop this function here, if isTrackingPlane is false
 		if (!isTrackingPlane) return;
 
 		//try to connect to backend using getPlane
 		try {
 			planeData = await getPlane(userLatitude, userLongitude);
 		} catch (error: any) {
-			console.log('Backend Issue');
+			console.log('Backend Issue:', error);
 			statusCode = 131;
 			isTrackingPlane = false;
 		}
 
-		if (planeData === undefined && isTrackingPlane === true) {
-			console.log('No plane data received,next try in 15s ');
-			timerID = setTimeout(startEngine, 15000);
-		} else if (planeData !== undefined && isTrackingPlane === true) {
-			console.log('Got plane data, next try in 25s');
+		if (planeData === null && isTrackingPlane === true) {
+			console.log('No plane data');
+			//false indicating we did not get data
+			handlePlaneData(planeData, false);
+		} else if (planeData != null && isTrackingPlane === true) {
+			console.log('Got plane data');
 			console.log('PlaneData:', planeData);
-			timerID = setTimeout(startEngine, 25000);
+			//true indicating we got data
+			handlePlaneData(planeData, true);
 		} else {
-			console.log('Stopping Engine');
-			//clear exiting timers
-			clearTimeout(timerID);
+			console.log('Stopping PlaneCall');
+			//clear exiting timers if any exists
+			if (timerID != 0) {
+				clearTimeout(timerID);
+				console.log('Cleared existing timer');
+			} else {
+				console.log('No timer to clear');
+			}
 		}
 	}
 
@@ -71,7 +91,7 @@
 			try {
 				const location = await getPositionCords();
 				userLatitude = location.latitude;
-				userLongitude = location.latitude;
+				userLongitude = location.longitude;
 				statusCode = 125;
 				console.log('Location :', userLatitude, userLongitude);
 			} catch (error: any) {
@@ -82,8 +102,10 @@
 			}
 			//continue to start the main enginge if stil isTrackingPlane
 			if (isTrackingPlane) {
-				startEngine();
+				startPlaneCall();
 			}
+		} else {
+			planeAngle = 0;
 		}
 	}
 </script>

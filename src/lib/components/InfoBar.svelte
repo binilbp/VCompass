@@ -32,7 +32,7 @@
 				console.log('Cant Connect to Backend');
 				return {
 					eng: 'Sorry! Backend Issues.Try Later',
-					mal: 'ശേ !! പണി കിട്ടി ബ്രോ, കണക്ട് ആവണില്ല.<br />കുറച് ക്കഴിഞ്ഞു വാ, സെറ്റ് ആക്കാം'
+					mal: 'ശേ !! പണി കിട്ടി ബ്രോ, കണക്ട് ആവണില്ല.<br />കുറച്ക്കഴിഞ്ഞു വാ, സെറ്റ് ആക്കാം'
 				};
 			default:
 				return { eng: '', mal: '' };

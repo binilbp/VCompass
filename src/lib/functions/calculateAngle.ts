@@ -27,5 +27,5 @@ export function calculateAngle(lat1: number, lon1: number, lat2: number, lon2: n
 	let angle = (bearing + 360) % 360;
 
 	//round the angle to 2 decimal palces
-	return (Math.round(angle) * 100) / 100;
+	return Math.round(angle * 100) / 100;
 }
