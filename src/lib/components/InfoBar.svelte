@@ -111,7 +111,11 @@
 </script>
 
 <!-- @html tag identified the html tag in the string and render it as html -->
-<p class=" text-center font-comfortaa text-sm font-semibold text-sky-50 md:text-lg">
-	{@html info.eng}
-</p>
-<p class="text-center font-baloo text-sm font-semibold text-sky-50 md:text-lg">{@html info.mal}</p>
+<div class="my-5">
+	<p class=" text-center font-comfortaa text-sm font-semibold text-sky-50 md:text-lg">
+		{@html info.eng}
+	</p>
+	<p class="text-center font-baloo text-sm font-semibold text-sky-50 md:text-lg">
+		{@html info.mal}
+	</p>
+</div>

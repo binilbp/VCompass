@@ -7,7 +7,7 @@
 	// functions imported
 	import { getPositionCords } from '$lib/functions/getPositionCords';
 	import { getPlane } from '$lib/functions/getPlane';
-	// import { playSound } from '$lib/playSound.js';
+	import { playPlaneFound } from '$lib/functions/playPlaneFound';
 	import { getStatusCode } from '$lib/functions/getStatusCode';
 	import { calculateAngle } from '$lib/functions/calculateAngle';
 
@@ -30,6 +30,10 @@
 	let timerID: number = 0;
 	// consecutive times we got no data back
 	let noDataCount: number = $state(3);
+	//to store and compare plane name
+	let planeName: string = '';
+	//to store plane data for plane card
+	let planeCardData: any = $state({});
 
 	function handlePlaneData(data: any, gotData: boolean) {
 		//just two make sure no paralled timer is running
@@ -37,6 +41,7 @@
 		if (!gotData) {
 			console.log('Set 10s timer for next plane call');
 			timerID = setInterval(startPlaneCall, 10000);
+
 			//increment noDataCount for long wait special info
 			noDataCount++;
 			if (noDataCount >= 2) statusCode = 126;
@@ -47,17 +52,31 @@
 		} else {
 			console.log('Set 25s timer for next plane call');
 			timerID = setTimeout(startPlaneCall, 25000);
+
 			//get angle to set the white plane
 			const angle = calculateAngle(userLatitude, userLongitude, data.lat, data.lon);
 			//set the white plane angle
 			planeAngle = angle;
+
+			const planeDistance = data.distance;
+
+			if (planeName != data.callsign) {
+				//set plane name and play sound if new name
+				planeName = data.callsign;
+				planeCardData = { planeName, planeDistance, planeAngle, isTrackingPlane };
+				playPlaneFound();
+			}
+
 			//set info
 			statusCode = getStatusCode(angle);
+			//set data count to 0 incase it was incremented
+			if (noDataCount > 0) noDataCount = 0;
 		}
 	}
 
 	async function startPlaneCall() {
 		let planeData = undefined;
+
 		//simple check to stop this function here, if isTrackingPlane is false
 		if (!isTrackingPlane) return;
 
@@ -72,15 +91,18 @@
 
 		if (planeData === null && isTrackingPlane === true) {
 			console.log('No plane data');
+
 			//false indicating we did not get data
 			handlePlaneData(planeData, false);
 		} else if (planeData != null && isTrackingPlane === true) {
 			console.log('Got plane data');
 			console.log('PlaneData:', planeData);
+
 			//true indicating we got data
 			handlePlaneData(planeData, true);
 		} else {
 			console.log('Stopping PlaneCall');
+
 			//clear exiting timers if any exists
 			if (timerID != 0) {
 				clearTimeout(timerID);
@@ -100,6 +122,7 @@
 			// try getting location
 			try {
 				const location = await getPositionCords();
+
 				userLatitude = location.latitude;
 				userLongitude = location.longitude;
 				statusCode = 125;
@@ -117,6 +140,7 @@
 		} else {
 			console.log('Tracking Stopped');
 			console.log('Clearing any exising timers');
+
 			if (timerID > 0) clearTimeout(timerID);
 			planeAngle = 0;
 		}
@@ -160,7 +184,12 @@
 			</button>
 		{/if}
 	</div>
-	<div class="flex flex-col items-center justify-start px-5 py-2 md:w-120 md:pt-30">
+	<div class="flex flex-col items-center justify-start gap-4 px-5 py-2 md:w-120 md:gap-2 md:pt-30">
 		<InfoBar {statusCode} />
+
+		<!-- only render planecard if statusCode >=135, that is plane found -->
+		{#if statusCode >= 135}
+			<PlaneCard {...planeCardData} />
+		{/if}
 	</div>
 </div>
