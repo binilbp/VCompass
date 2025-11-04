@@ -3,7 +3,7 @@
 	import Body from '$lib/components/Body.svelte';
 </script>
 
-<div class="flex h-dvh flex-col items-center justify-start bg-lime-500">
+<div class="flex flex-col items-center justify-start bg-lime-500">
 	<Header />
 	<Body />
 </div>

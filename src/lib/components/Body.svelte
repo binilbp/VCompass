@@ -166,7 +166,7 @@
 		</div>
 		{#if noDataCount == 5}
 			<button
-				class="rounded-2xl bg-sky-900 px-4 py-3.5 font-comfortaa font-semibold text-lime-500 shadow-md"
+				class="rounded-2xl bg-sky-900 px-4 py-3.5 font-comfortaa font-semibold shadow-md"
 				onclick={() => {
 					statusCode = 129;
 					noDataCount = 0;
