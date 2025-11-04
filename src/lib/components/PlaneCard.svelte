@@ -17,15 +17,15 @@
 </script>
 
 <div
-	class="flex flex-row gap-5 rounded-2xl bg-sky-50 px-6 py-3 font-sans font-semibold text-sky-950 shadow-sm"
+	class="flex flex-row rounded-2xl bg-sky-50 px-3 py-2 font-sans font-semibold text-sky-950 shadow-sm"
 >
-	<p class="px-4 py-2.5 font-comfortaa font-semibold text-sky-900">
+	<p class="px-3 py-1 font-comfortaa text-sm font-semibold text-sky-900">
 		PLANE: {planeName} <br />DIST: {planeDistance}km
 	</p>
 	<button
 		class="rounded-2xl bg-sky-900 px-3 font-comfortaa text-sm font-semibold text-lime-500 shadow-md"
 		onclick={playDirectionSound}
 	>
-		I cant see!!
+		I Cant SEE !
 	</button>
 </div>

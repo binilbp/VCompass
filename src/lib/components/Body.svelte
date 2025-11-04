@@ -148,7 +148,9 @@
 </script>
 
 <div class="flex flex-col items-center justify-start md:flex-row md:items-start md:justify-around">
-	<div class="flex flex-col items-center justify-start gap-8 p-5 md:flex-row md:justify-between">
+	<div
+		class="flex flex-col items-center justify-start gap-8 p-3 md:flex-row md:justify-between md:p-5"
+	>
 		<div class="grid place-items-center">
 			<img
 				class="z-30 col-start-1 row-start-1 h-auto w-2/4 transition-transform duration-1000"
