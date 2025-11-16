@@ -1,38 +1,22 @@
-# sv
+# V-Compass
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+### Plane spotting made effortless.
+#### വിമാനം വരുമോ എന്ന് നോക്കിക്കൊണ്ട് കാത്തിരിക്കേണ്ട...
+**V-Compass** is a web application designed to bring back the simple enjoyment of plane watching without the need to constantly stare at the sky. Using real-time flight data combined with your location, it provides an instant update on whether an aircraft is currently passing overhead.
 
-## Creating a project
+Plane watching is fun, but standing around endlessly waiting for a plane to appear is not. V-Compass does a quick live scan over your area and shows you the direction of any nearby aircraft in real time, so you can look up only when there’s something worth seeing without wasting ur time.
+<br></br>
+### Real-Time Plane Detection
+The web app checks the live airspace above your location using real flight data and informs you if an aircraft is nearby.
 
-If you're seeing this, you've probably already done this step. Congrats!
+### Direction Compass 
+The white plane pointer shows the exact direction in which the aircraft is located.
 
-```sh
-# create a new project in the current directory
-npx sv create
+### Voice Callouts
+Special Callouts included in both English and Malayalam:
+North / വടക്ക്
+Northeast / വടക്കുകിഴക്ക്.. etc
 
-# create a new project in my-app
-npx sv create my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+### Live Demo
+You can try the hosted version here:
+https://v-compass-main.vercel.app
