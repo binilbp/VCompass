@@ -1,11 +1,16 @@
-# V-Compass
+<h1 align="center">V-Compass</h1>
 
-### Plane spotting made effortless.
-#### വിമാനം വരുമോ എന്ന് നോക്കിക്കൊണ്ട് കാത്തിരിക്കേണ്ട...
+<h3 align="center">Plane spotting made effortless.</h3>
+<h4 align="center">വിമാനം വരുമോ എന്ന് നോക്കിക്കൊണ്ട് കാത്തിരിക്കേണ്ട...</h4>
+
+<p align="center">
+  <img src="./server/v-compass-screenshot.png" alt="Screenshot of V-Compass" width="300">
+</p
 **V-Compass** is a web application designed to bring back the simple enjoyment of plane watching without the need to constantly stare at the sky. Using real-time flight data combined with your location, it provides an instant update on whether an aircraft is currently passing overhead.
 
 Plane watching is fun, but standing around endlessly waiting for a plane to appear is not. V-Compass does a quick live scan over your area and shows you the direction of any nearby aircraft in real time, so you can look up only when there’s something worth seeing without wasting ur time.
-<br></br>
+
+
 ### Real-Time Plane Detection
 The web app checks the live airspace above your location using real flight data and informs you if an aircraft is nearby.
 
